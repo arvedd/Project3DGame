@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,58 +7,31 @@ public class Gunfire : MonoBehaviour
 {
     [SerializeField] AudioSource gunfire;
     [SerializeField] GameObject gun;
-    [SerializeField] GameObject extraCross;
-
+    private Animator gunAnimation;
     public bool isShoot = false;
-    public InputActionReference attackAction;
+    public bool canReload = true;
 
-    // public Ammo ammo;
 
-    private void OnEnable()
+    void Awake()
     {
-        attackAction.action.Enable();
-        attackAction.action.performed += OnShooting;
-        attackAction.action.canceled += OnStopShooting;
+        gunAnimation = gun.GetComponent<Animator>();
     }
 
-    private void OnDisable()
+    public void ShootGun()
     {
-        attackAction.action.Disable();
-        attackAction.action.performed -= OnShooting;
-        attackAction.action.canceled -= OnStopShooting;
+        StartCoroutine(FiringGun());
+
     }
 
-    void OnShooting(InputAction.CallbackContext context)
-    {
-        if (!isShoot && Ammo.ammoCount > 0)
-        {
-            StartCoroutine(FiringGun());
-            Ammo.ammoCount -= 1;
-        }
+    public IEnumerator FiringGun()
+    { 
+        gunfire.Play();
+
+        gunAnimation.Play("GunFireM4");
+        yield return new WaitForSeconds(0.1f);
         
-    }
+        gunAnimation.Play("Idle");
+        yield return new WaitForSeconds(0.1f);
 
-    void OnStopShooting(InputAction.CallbackContext context)
-    {
-        isShoot = false;
-    }
-
-    IEnumerator FiringGun()
-    {
-        isShoot = true;
-
-        while (isShoot)
-        {
-            gunfire.Play();
-            extraCross.SetActive(true);
-
-            gun.GetComponent<Animator>().Play("GunFireM4");
-            yield return new WaitForSeconds(0.1f);
-
-            extraCross.SetActive(false);
-            gun.GetComponent<Animator>().Play("Idle");
-            yield return new WaitForSeconds(0.1f);
-        }
-        
     }
 }
