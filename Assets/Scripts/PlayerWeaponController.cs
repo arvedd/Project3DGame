@@ -11,7 +11,6 @@ public class PlayerWeaponController : MonoBehaviour
     [SerializeField] AudioSource reloadGun;
     [SerializeField] GameObject ammoBox;
     public Gunfire gun;
-    public Enemy enemy;
     private GameObject currentAmmoBox;
     public bool isShoot = false;
     public bool canReload = true;
@@ -114,8 +113,6 @@ public class PlayerWeaponController : MonoBehaviour
         currentAmmoBox = null;
         reloadText.SetActive(false);
         isLookingAmmo = false;
-        
-        
     }
 
     IEnumerator PlayerShoot()
@@ -129,7 +126,7 @@ public class PlayerWeaponController : MonoBehaviour
 
             if (isLookingEnemy)
             {
-                enemy.Damage(2);
+                HitInfo.currentTarget.TakeDamage(100);
             }
 
             extraCross.SetActive(true);

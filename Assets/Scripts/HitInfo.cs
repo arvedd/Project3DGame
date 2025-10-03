@@ -7,31 +7,47 @@ public class HitInfo : MonoBehaviour
 {
     internal static object action;
     [SerializeField] new Camera camera;
+    [SerializeField] bool useCamera = true;
+    [SerializeField] Transform rayOrigin;
 
     public static event Action OnSeeEnemy;
     public static event Action OnExitEnemy;
+    public static Damageable currentTarget;
 
 
     void Update()
     {
-        RaycastHit hit;
-        Ray ray = camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+        Ray ray;
 
-        if (Physics.Raycast(ray, out hit))
+        if (useCamera)
         {
+            ray = camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+        }
+        else
+        {
+            ray = new Ray(rayOrigin.position, rayOrigin.forward);
+        }
 
-            if (hit.collider.CompareTag("Enemy"))
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+        {
+            var damageable = hit.collider.GetComponent<Damageable>();
+            if (damageable != null)
             {
-                Transform objectHit = hit.transform;
+                currentTarget = damageable;
                 OnSeeEnemy?.Invoke();
             }
             else
             {
+                currentTarget = null;
                 OnExitEnemy?.Invoke();
             }
-            
-               
         }
+        else
+        {
+            currentTarget = null;
+            OnExitEnemy?.Invoke();
+        }
+        
     }
 
 

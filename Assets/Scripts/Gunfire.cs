@@ -14,7 +14,13 @@ public class Gunfire : MonoBehaviour
 
     void Awake()
     {
+        if (gun == null)
+        {
+            gun = GameObject.FindGameObjectWithTag("GunFireEnemy");
+        }
+
         gunAnimation = gun.GetComponent<Animator>();
+
     }
 
     public void ShootGun()
@@ -27,7 +33,10 @@ public class Gunfire : MonoBehaviour
     { 
         gunfire.Play();
 
-        gunAnimation.Play("GunFireM4");
+        if (gunAnimation != null)
+        {
+            gunAnimation.Play("GunFireM4");
+        }
         yield return new WaitForSeconds(0.1f);
         
         gunAnimation.Play("Idle");
